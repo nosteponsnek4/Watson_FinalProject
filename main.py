@@ -14,7 +14,7 @@ class Dogfighter:
         pygame.init()
         self.settings = Settings()
 
-        self.screen = pygame.FULLSCREEN
+        self.screen = pygame.display.set_mode((1200, 600))
         self.settings.screen_width = self.screen.get_rect().width
         self.settings.screen_height = self.screen.get_rect().height
         pygame.display.set_caption("Alien Invasion")
@@ -27,7 +27,8 @@ class Dogfighter:
         """Start the main loop for the game."""
         while True:
             self._check_events()
-            self.ship.update()
+            self.ship_one.update()
+            self.ship_two.update()
             self._update_bullets()
             self._update_screen()
 
@@ -47,19 +48,35 @@ class Dogfighter:
             self.ship_two.turning_right = True
         elif event.key == pygame.K_LEFT:
             self.ship_two.turning_left = True
+        elif event.key == pygame.K_UP:
+            self.ship_two.accel = True
         # Need help adding the acceleration for ship two
         # Need help creating the keydown events for ship one using WAD keys
+        if event.key == pygame.K_d:
+            self.ship_one.turning_right = True
+        elif event.key == pygame.K_a:
+            self.ship_one.turning_left = True
+        elif event.key == pygame.K_w:
+            self.ship_one.accel = True
         elif event.key == pygame.K_q:
             sys.exit()
-        elif event.key == pygame.:  # Need to split the fire mechanic
+        elif event.key == pygame.K_DOWN:  # Need to split the fire mechanic
             self._fire_bullet()
 
     def _check_keyup_events(self, event):
         """Respond to key releases."""
         if event.key == pygame.K_RIGHT:
-            self.ship_two.moving_right = False
+            self.ship_two.turning_right = False
         elif event.key == pygame.K_LEFT:
-            self.ship_two.moving_left = False
+            self.ship_two.turning_left = False
+        elif event.key == pygame.K_UP:
+            self.ship_two.accel = False
+        if event.key == pygame.K_d:
+            self.ship_one.turning_right = False
+        elif event.key == pygame.K_a:
+            self.ship_one.turning_left = False
+        elif event.key == pygame.K_w:
+            self.ship_one.accel = False
         # Need help adding the stop acceleration for ship two
         # Need help creating the keyup events for ship one using WAD keys
 
@@ -78,6 +95,12 @@ class Dogfighter:
         # Get rid of bullets that have disappeared.
         for bullet in self.bullets.copy():
             if bullet.rect.y <= 0:  # Need to change this so it removes at any edge
+                self.bullets.remove(bullet)
+            if bullet.rect.x <= 0:  # Need to change this so it removes at any edge
+                self.bullets.remove(bullet)
+            if bullet.rect.y >= 800:  # Need to change this so it removes at any edge
+                self.bullets.remove(bullet)
+            if bullet.rect.x >= 1200:  # Need to change this so it removes at any edge
                 self.bullets.remove(bullet)
 
     def _update_screen(self):
