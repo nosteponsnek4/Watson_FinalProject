@@ -1,11 +1,13 @@
 import sys
 import pygame
+from random import randint
 
 from Settings import Settings
 from Ship_two import ShipTwo
 from ShipOne import ShipOne
 from Bullet import Bullet
 from Bullet_two import Bullet_Two
+from D_power import ShieldUp
 
 
 class Dogfighter:
@@ -15,6 +17,7 @@ class Dogfighter:
         """Initialize the game, and create game resources."""
         pygame.init()
         pygame.mixer.init()
+        self.clock = pygame.time.Clock()
 
         self.settings = Settings()
 
@@ -39,6 +42,9 @@ class Dogfighter:
         self.bullets = pygame.sprite.Group()
         self.Bullet_two = Bullet_Two(self, self.ship_two.i)
         self.bullets_two = pygame.sprite.Group()
+
+        self.shield_up = pygame.sprite.Group()
+        self.p = 0
 
         self.play_game = False
         self.show_instructions = False
@@ -111,8 +117,14 @@ class Dogfighter:
         self.ship_two.update()
         self._update_bullets()
         self._update_screen()
+        self.show_score()
         self.Bullet.update()
         self.Bullet_two.update()
+        self.gen_power()
+        self.pick_up_one()
+        self.pick_up_two()
+
+        pygame.display.flip()
 
     def _check_events(self):
         """Respond to keypresses and mouse events."""
@@ -226,18 +238,54 @@ class Dogfighter:
     def are_circles_intersecting(self, a_x, a_y, a_radius, b_x, b_y, b_radius):
         return (a_x - b_x) ** 2 + (a_y - b_y) ** 2 <= (a_radius + b_radius) ** 2
 
+    def gen_power(self):
+        if len(self.shield_up) < 1:
+            if randint(1, 1000) == 24:
+                new_power = ShieldUp(self)
+                self.shield_up.add(new_power)
+
+    def pick_up_one(self):
+        for shield in self.shield_up:
+            if self.are_circles_intersecting(shield.rect.x, shield.rect.y, self.settings.shield_r,
+                                             self.ship_one.rect.x + 20, self.ship_one.rect.y + 20,
+                                             self.settings.shield_r):
+                self.shield_up.remove(shield)
+                if self.ship_one.health <= 5:
+                    self.ship_one.health += 1
+        pygame.display.flip()
+
+    def pick_up_two(self):
+        for shield in self.shield_up:
+            if self.are_circles_intersecting(shield.rect.x, shield.rect.y, self.settings.shield_r,
+                                             self.ship_two.rect.x + 20, self.ship_two.rect.y + 20,
+                                             self.settings.shield_r):
+                self.shield_up.remove(shield)
+                if self.ship_two.health <= 5:
+                    self.ship_two.health += 1
+        pygame.display.flip()
+
+    def show_score(self):
+        pygame.draw.rect(self.screen, (50, 150, 150), (0, 0, 1200, 40))
+        self.base_font = pygame.font.Font(None, 50)
+        score_two_txt = self.base_font.render('Player one: ' + str(self.ship_two.health), True, (155, 55, 55))
+        self.screen.blit(score_two_txt, (self.txt_rect.x + 850, 0))
+        score_one_txt = self.base_font.render('Player one: ' + str(self.ship_one.health), True, (155, 55, 55))
+        self.screen.blit(score_one_txt, (self.txt_rect.x - 70, 0))
+        self.clock.tick(60)
+
     def _update_screen(self):
         """Update images on the screen, and flip to the new screen."""
         self.screen.fill(self.settings.bg_color)
         self.ship_one.blitme()
         self.ship_two.blitme()
+        self.gen_power()
+        for shield in self.shield_up.sprites():
+            shield.draw_shield()
         self.Bullet.update()
         for bullet in self.bullets.sprites():
             bullet.draw_bullet()
         for bullet in self.bullets_two.sprites():
             bullet.draw_bullet()
-
-        pygame.display.flip()
 
 
 if __name__ == '__main__':

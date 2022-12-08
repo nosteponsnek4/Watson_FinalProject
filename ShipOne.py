@@ -51,16 +51,16 @@ class ShipOne:
 
         if self.accel:
             if self.i % 4 == 0:
-                if self.x <= 1160:
+                if self.x <= 1140:
                     self.x += self.settings.ship_speed
             elif self.i % 4 == 2:
-                if self.x >= 0:
+                if self.x >= 20:
                     self.x -= self.settings.ship_speed
             elif self.i % 4 == 1:
-                if self.y <= 560:
+                if self.y <= 540:
                     self.y += self.settings.ship_speed
             elif self.i % 4 == 3:
-                if self.y >= 0:
+                if self.y >= 50:
                     self.y -= self.settings.ship_speed
 
         self.rect.x = self.x
