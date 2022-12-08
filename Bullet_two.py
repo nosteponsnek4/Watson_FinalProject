@@ -1,10 +1,10 @@
 import pygame.draw
 import pygame
 from pygame.sprite import Sprite
-from ShipOne import ShipOne
+from Ship_two import ShipTwo
 
 
-class Bullet(Sprite):
+class Bullet_Two(Sprite):
     """A class to manage bullets fired from the ship"""
 
     def __init__(self, ai_game, i):
@@ -12,23 +12,23 @@ class Bullet(Sprite):
         super().__init__()
         self.screen = ai_game.screen
         self.settings = ai_game.settings
-        self.color = self.settings.bullet_color_o
-        self.ship = ShipOne(ai_game)
+        self.color = self.settings.bullet_color_t
+        self.ship = ShipTwo(ai_game)
         self.i = i
 
         # Create a bullet rect at (0, 0) and then set correct position.
         self.rect = pygame.Rect(0, 0, self.settings.bullet_height,
                                 self.settings.bullet_width)
         if self.i % 4 == 0:
-            self.rect.midright = ai_game.ship_one.rect.midright
+            self.rect.midright = ai_game.ship_two.rect.midright
         elif self.i % 4 == 2:
-            self.rect.midleft = ai_game.ship_one.rect.midleft
+            self.rect.midleft = ai_game.ship_two.rect.midleft
         elif self.i % 4 == 1:
-            self.rect.midtop = ai_game.ship_one.rect.midtop
+            self.rect.midtop = ai_game.ship_two.rect.midtop
             self.rect.x += 8
 
         elif self.i % 4 == 3:
-            self.rect.midbottom = ai_game.ship_one.rect.midbottom
+            self.rect.midbottom = ai_game.ship_two.rect.midbottom
             self.rect.x += 8
 
         # Store the bullet's position as a decimal value.
@@ -37,15 +37,7 @@ class Bullet(Sprite):
 
     def update(self):
         """Move the bullet up the screen."""
-        # if self.ship.turning_right:
-        #     if self.t == 0:
-        #         self.i += 1
-        #         self.t += 1
-        #
-        # elif self.ship.turning_left:
-        #     if self.t == 0:
-        #         self.i -= 1
-        #         self.t += 1
+
         self.ship.update()
         if self.i % 4 == 0:
             self.x += self.settings.bullet_speed
@@ -55,8 +47,7 @@ class Bullet(Sprite):
             self.y -= self.settings.bullet_speed
         elif self.i % 4 == 1:
             self.y += self.settings.bullet_speed
-        # Update the decimal position of the bullet.
-        # Update the rect position.
+
         self.rect.x = self.x
         self.rect.y = self.y
 

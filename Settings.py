@@ -10,12 +10,13 @@ class Settings:
 
         # Ship settings
         self.ship_speed = .5
+        self.shield_r = 30
 
         # Bullet settings
         self.bullet_speed = 1.0
         self.bullet_width = 3
         self.bullet_height = 15
         self.bullet_radius = 5
-        self.bullet_color_o = (255, 0, 0)
-        self.bullet_color_t = (0, 0, 255)
+        self.bullet_color_o = (180, 170, 70)
+        self.bullet_color_t = (70, 170, 170)
         self.bullets_allowed = 2
